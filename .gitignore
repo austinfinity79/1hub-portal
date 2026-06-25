@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.db
+.env
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+.vite/
+
+# Claude
+.claude/
