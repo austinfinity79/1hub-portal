@@ -11,12 +11,14 @@ import random
 from datetime import datetime, timedelta
 from uuid import uuid4
 
+from app.core.auth import hash_password
 from app.database import Base, SessionLocal, engine
 from app.models.fee import Fee
 from app.models.merchant import Merchant
 from app.models.notify_queue import NotifyQueue
 from app.models.reconciliation import Reconciliation
 from app.models.transaction import Transaction
+from app.models.user import User
 
 
 def _uuid() -> str:
@@ -51,6 +53,19 @@ def seed() -> None:
     db = SessionLocal()
 
     try:
+        # ── Default Admin User ────────────────────────────────────
+        admin = User(
+            id=_uuid(),
+            username="admin",
+            email="admin@1hub.vn",
+            hashed_password=hash_password("admin123"),
+            role="admin",
+            is_active=True,
+        )
+        db.add(admin)
+        db.flush()
+        print("  Created default admin user (admin / admin123)")
+
         # ── Merchants ──────────────────────────────────────────────
         merchants_data = [
             {

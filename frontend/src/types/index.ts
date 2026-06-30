@@ -57,3 +57,34 @@ export interface PaginatedResponse<T> {
   page: number;
   page_size: number;
 }
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: 'admin' | 'ops' | 'viewer';
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface ApiKey {
+  id: string;
+  merchant_id: string;
+  label: string;
+  key_prefix: string;
+  is_active: boolean;
+  created_by: string;
+  created_at: string;
+  last_used_at: string | null;
+}
+
+export interface AuditLog {
+  id: string;
+  user_id: string | null;
+  action: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  detail: string | null;
+  ip_address: string | null;
+  created_at: string;
+}

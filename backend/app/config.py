@@ -14,6 +14,15 @@ class Settings(BaseSettings):
 
     ENV: str = "dev"
 
+    # Auth / JWT
+    JWT_SECRET: str = "change-me-in-production"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # API Key encryption
+    API_KEY_MASTER_SECRET: str = "change-me-api-key-secret"
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]

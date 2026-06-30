@@ -1,6 +1,14 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
-const NAV_ITEMS = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
   {
     to: '/',
     label: 'Tổng quan',
@@ -58,6 +66,58 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    to: '/qr-test',
+    label: 'Test QR',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="6" height="6" rx="1" />
+        <rect x="12" y="2" width="6" height="6" rx="1" />
+        <rect x="2" y="12" width="6" height="6" rx="1" />
+        <rect x="13" y="13" width="2" height="2" />
+        <rect x="16" y="13" width="2" height="2" />
+        <rect x="13" y="16" width="2" height="2" />
+        <rect x="16" y="16" width="2" height="2" />
+      </svg>
+    ),
+  },
+  {
+    to: '/api-keys',
+    label: 'API Keys',
+    adminOnly: true,
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="7" cy="10" r="3" />
+        <line x1="10" y1="10" x2="18" y2="10" />
+        <line x1="15" y1="7" x2="15" y2="10" />
+        <line x1="18" y1="7" x2="18" y2="10" />
+      </svg>
+    ),
+  },
+  {
+    to: '/users',
+    label: 'Người dùng',
+    adminOnly: true,
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10" cy="6" r="3" />
+        <path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+      </svg>
+    ),
+  },
+  {
+    to: '/audit-logs',
+    label: 'Nhật ký',
+    adminOnly: true,
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="2" width="14" height="16" rx="2" />
+        <line x1="7" y1="6" x2="13" y2="6" />
+        <line x1="7" y1="10" x2="13" y2="10" />
+        <line x1="7" y1="14" x2="10" y2="14" />
+      </svg>
+    ),
+  },
 ];
 
 const linkBase =
@@ -66,6 +126,13 @@ const linkInactive = 'text-slate-300 hover:bg-slate-800 hover:text-white';
 const linkActive = 'bg-slate-700 text-white';
 
 export default function Sidebar() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.adminOnly || isAdmin,
+  );
+
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-60 bg-slate-900 flex flex-col z-30">
       <div className="px-5 py-5 border-b border-slate-700">
@@ -74,7 +141,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map((item) => (
+        {visibleItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
