@@ -227,3 +227,42 @@ class TestRoundTrip:
         fields = dict(parse_tlv(qr))
         assert fields["59"] == "CafePho 68"
         assert fields["60"] == "Ho Chi Minh"
+
+
+# ── Test 6: Demo real VCB — build + parse + CRC verify ─────────────
+
+class TestDemoReal:
+    """Build QR chuyển khoản thật tới TK Vietcombank, verify round-trip."""
+
+    def test_demo_real_vcb(self):
+        qr = generate_dynamic_qr(
+            bnb_id="970436",
+            consumer_id="REDACTED_ACCOUNT",
+            amount=2000,
+            service="QRIBFTTA",
+            purpose="test napas qr",
+        )
+
+        # Parse top-level
+        fields = dict(parse_tlv(qr))
+        assert fields["00"] == "01"       # Payload Format
+        assert fields["01"] == "12"       # Dynamic
+        assert fields["53"] == "704"      # VND
+        assert fields["54"] == "2000"     # Amount
+        assert fields["58"] == "VN"       # Country
+
+        # Parse block 38 — verify BNB ID + consumer ID
+        id38 = dict(parse_tlv(fields["38"]))
+        assert id38["00"] == "A000000727"  # NAPAS GUID
+        assert id38["02"] == "QRIBFTTA"    # Service
+        sub01 = dict(parse_tlv(id38["01"]))
+        assert sub01["00"] == "970436"           # Vietcombank BIN
+        assert sub01["01"] == "REDACTED_ACCOUNT"    # Số TK VCB
+
+        # Parse block 62 — purpose
+        id62 = dict(parse_tlv(fields["62"]))
+        assert id62["08"] == "test napas qr"
+
+        # CRC verify
+        payload = qr[:-4]
+        assert crc16_ccitt(payload) == qr[-4:]
