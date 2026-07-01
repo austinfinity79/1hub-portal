@@ -22,5 +22,13 @@ Thumbs.db
 # Vite
 .vite/
 
+# NAPAS keys/certs — NEVER commit
+*.key
+*.csr
+*.cer
+*.p12
+*.pfx
+keys/
+
 # Claude
 .claude/
