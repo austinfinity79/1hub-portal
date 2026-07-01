@@ -29,6 +29,7 @@ Thumbs.db
 *.p12
 *.pfx
 keys/
+demo_real.png
 
 # Claude
 .claude/

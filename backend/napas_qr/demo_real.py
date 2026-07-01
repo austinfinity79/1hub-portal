@@ -1,4 +1,4 @@
-"""Demo chuyển khoản THẬT qua VietQR IBFT — tới TK Vietcombank.
+"""Demo chuyển khoản THẬT qua VietQR IBFT.
 
 Sinh QR EMVCo chuẩn, app ngân hàng bất kỳ quét được và chuyển tiền THẬT.
 Dùng để verify generator end-to-end mà không phụ thuộc alias NAPAS.
@@ -7,23 +7,32 @@ Khác biệt với production:
   - Demo điền BNB ID + số TK trực tiếp vào ID 38 (chuyển thẳng TK cá nhân).
   - Production thay số TK bằng alias NPxxx (TODO[NAPAS-Q2]).
 
+Cấu hình qua env hoặc sửa trực tiếp giá trị bên dưới.
+
 Chạy:
     pip install "qrcode[pil]"
-    python -m napas_qr.demo_real
+    DEMO_BNB_ID=970436 DEMO_CONSUMER_ID=<số TK> python -m napas_qr.demo_real
 """
+
+import os
 
 from napas_qr.builder import generate_dynamic_qr
 from napas_qr.crc import crc16_ccitt
 from napas_qr.tlv import parse_tlv
 
-# Tham số thật — Vietcombank
-BNB_ID = "970436"                # Vietcombank BIN (Phụ lục 2 APG)
-CONSUMER_ID = "REDACTED_ACCOUNT"    # Số TK VCB thật
-AMOUNT = 2000                    # Tối thiểu hạn mức APG, test mất ít tiền nhất
-PURPOSE = "test napas qr"
+# Đọc từ env — KHÔNG hardcode số TK cá nhân
+BNB_ID = os.environ.get("DEMO_BNB_ID", "970436")          # BIN ngân hàng (mặc định Vietcombank)
+CONSUMER_ID = os.environ.get("DEMO_CONSUMER_ID", "")       # Số TK đích — bắt buộc set qua env
+AMOUNT = int(os.environ.get("DEMO_AMOUNT", "2000"))         # Tối thiểu hạn mức APG
+PURPOSE = os.environ.get("DEMO_PURPOSE", "test napas qr")
 
 
 def main() -> None:
+    if not CONSUMER_ID:
+        print("ERROR: Set DEMO_CONSUMER_ID env variable (số TK ngân hàng đích)")
+        print("  DEMO_CONSUMER_ID=0123456789 python -m napas_qr.demo_real")
+        return
+
     s = generate_dynamic_qr(
         bnb_id=BNB_ID,
         consumer_id=CONSUMER_ID,
@@ -59,7 +68,7 @@ def main() -> None:
         import qrcode
         qrcode.make(s).save("demo_real.png")
         print("QR image saved: demo_real.png")
-        print("Quét bằng app ngân hàng -> chuyển 2.000d tới VCB REDACTED_ACCOUNT")
+        print("Quét bằng app ngân hàng để test")
     except ImportError:
         print("Cài qrcode để sinh ảnh: pip install 'qrcode[pil]'")
         print("Hoặc copy chuỗi QR ở trên vào bất kỳ QR generator online.")

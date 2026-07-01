@@ -28,7 +28,7 @@ npm install
 npm run dev               # http://localhost:5173
 ```
 
-Login: `admin` / `admin123`
+Login: xem `seed.py` để biết default credentials.
 
 ## Project Structure
 
@@ -135,12 +135,7 @@ INITIATED → AUTHORIZED(ACSP) → SETTLED(ACSC) → NOTIFIED/QUEUED → RECONCI
 
 ### Sandbox Config
 
-```
-Base URL:      https://apg-stg.napas.com.vn
-Simulator:     https://apg-stg.napas.com.vn/bankdemo/app
-Source IP:     103.9.4.46 (whitelist webhook)
-Outbound:      103.9.4.116:443
-```
+Xem `.env.example` để biết sandbox endpoints, IP whitelist, và credentials.
 
 Endpoints: `POST {base}/apg/notification`, `POST {base}/apg/investigation`, `POST {base}/apg/reconciliation`
 
@@ -163,18 +158,18 @@ NAPAS_CERT_PATH=./keys/napas-signed-cert.pem
 
 ### Test Flow qua Simulator
 
-1. Mở firewall tới `apg-stg.napas.com.vn`
-2. Truy cập Simulator: `https://apg-stg.napas.com.vn/bankdemo/app`
+1. Mở firewall tới NAPAS sandbox (xem `.env.example` cho URL)
+2. Truy cập Simulator web app
 3. Đẩy lệnh chuyển tiền giả lập → NAPAS gửi notification về webhook 1Hub
 4. Verify: webhook nhận đúng, parse payload, tạo transaction, đối soát
 
-### QR Demo (tiền thật)
+### QR Demo
 
 ```bash
 cd backend
 pip install "qrcode[pil]"
 python -m napas_qr.demo_real
-# Quét demo_real.png bằng app NH → chuyển 2.000đ tới VCB REDACTED_ACCOUNT
+# Quét demo_real.png bằng app NH → xem chi tiết trong demo_real.py
 ```
 
 ### Cắm NAPAS thật

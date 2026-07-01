@@ -232,12 +232,16 @@ class TestRoundTrip:
 # ── Test 6: Demo real VCB — build + parse + CRC verify ─────────────
 
 class TestDemoReal:
-    """Build QR chuyển khoản thật tới TK Vietcombank, verify round-trip."""
+    """Build QR IBFT đến TK ngân hàng, verify round-trip."""
 
-    def test_demo_real_vcb(self):
+    # Dùng dummy account cho test — không dùng số TK thật
+    _BNB_ID = "970436"              # Vietcombank BIN (public info)
+    _CONSUMER_ID = "9999999999999"  # Dummy test account
+
+    def test_demo_real_roundtrip(self):
         qr = generate_dynamic_qr(
-            bnb_id="970436",
-            consumer_id="REDACTED_ACCOUNT",
+            bnb_id=self._BNB_ID,
+            consumer_id=self._CONSUMER_ID,
             amount=2000,
             service="QRIBFTTA",
             purpose="test napas qr",
@@ -256,8 +260,8 @@ class TestDemoReal:
         assert id38["00"] == "A000000727"  # NAPAS GUID
         assert id38["02"] == "QRIBFTTA"    # Service
         sub01 = dict(parse_tlv(id38["01"]))
-        assert sub01["00"] == "970436"           # Vietcombank BIN
-        assert sub01["01"] == "REDACTED_ACCOUNT"    # Số TK VCB
+        assert sub01["00"] == self._BNB_ID
+        assert sub01["01"] == self._CONSUMER_ID
 
         # Parse block 62 — purpose
         id62 = dict(parse_tlv(fields["62"]))
