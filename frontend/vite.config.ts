@@ -11,4 +11,11 @@ export default defineConfig({
       '/webhook': 'http://localhost:8000',
     },
   },
+  preview: {
+    port: 5173,
+    proxy: {
+      '/api': 'http://localhost:8000',
+      '/webhook': 'http://localhost:8000',
+    },
+  },
 })
